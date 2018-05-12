@@ -1,0 +1,19 @@
+{
+  "name": "netease_daliy",
+  "version": "1.0.0",
+  "description": "Daily Add & auto play",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a632079/netease-daily.git"
+  },
+  "author": "a632079 <a632079@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/a632079/netease-daily/issues"
+  },
+  "homepage": "https://github.com/a632079/netease-daily#readme"
+}
