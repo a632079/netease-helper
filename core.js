@@ -89,7 +89,7 @@ async function autoAddRecommendSongs () {
 
   // 解析 playlistFile
   winston.verbose('开始解析歌单文件...')
-  const playlists = require(playlistFile)
+  const playlists = fs.existsSync(playlistFile) ? require(playlistFile) : {}
   if (!playlists[playlistName]) {
     // 不存在歌单
     winston.verbose('未发现本月收藏歌单， 开始自动创建...')
