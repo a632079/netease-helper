@@ -40,7 +40,11 @@ class base {
       winston.verbose(this.cookie)
       winston.verbose(respData)
     }
-    this.user = new User(respData)
+    const userData = {
+      cookie: respData.cookie && respData.cookie.length > 1 ? respData.cookie : this.cookie,
+      data: respData.data && respData.data.loginType ? respData.data : this.user.info
+    }
+    this.user = new User(userData)
     return respData.data
   }
 }

@@ -6,14 +6,18 @@ class Personal extends Base {
    * @returns {Promise<object>}
    */
   async createPlaylist (name) {
+    if (typeof name !== 'string') {
+      name = name.toString()
+    }
+    const data = {
+      name: name,
+      csrf_token: ''
+    }
     return this.requestWithSetCookie(
       'music.163.com',
       '/weapi/playlist/create',
       'POST',
-      {
-        name,
-        csrf_token: ''
-      }
+      data
     )
   }
 

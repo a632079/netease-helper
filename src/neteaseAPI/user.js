@@ -4,8 +4,8 @@
 
 class User {
   constructor (store) {
-    this.info = store.data && store.data.account ? store.data : this.info
-    this.cookie = store.cookie ? store.cookie : this.cookie
+    this.info = store.data
+    this.cookie = store.cookie
   }
 
   get id () {

@@ -64,9 +64,14 @@ async function createWebAPIRequest (
     err.response = err
     throw err
   }
-
+  let cookies = resp.headers['set-cookie']
+  if (Array.isArray(cookie)) {
+    cookie = cookie
+      .map(x => x.replace(/.music.163.com/g, ''))
+      .sort((a, b) => a.length - b.length)
+  }
   return {
-    cookie: resp.headers['set-cookie'],
+    cookie: cookies,
     data: resp.data
   }
 }
@@ -75,9 +80,13 @@ async function createRequest (path, method, data) {
   const options = {
     method,
     headers: {
+      'Accept': '*/*',
+      'Accept-Language': 'zh-CN,zh;q=0.8,gl;q=0.6,zh-TW;q=0.4',
+      'Connection': 'keep-alive',
       'Content-Type': 'application/x-www-form-urlencoded',
       'Cookie': 'appver=1.5.2',
       'Referer': 'http://music.163.com',
+      'Host': 'music.163.com',
       'User-Agent': randomUserAgent()
     },
     url: `http://music.163.com${path}`
