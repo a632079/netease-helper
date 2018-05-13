@@ -59,7 +59,7 @@ async function createWebAPIRequest (
 
   const resp = await axios.request(options)
 
-  if (!resp.data || resp.data.code !== 200) {
+  if (!resp.data) {
     const err = resp.data ? new Error(resp.data.msg) : new Error('Request failed.')
     err.response = err
     throw err

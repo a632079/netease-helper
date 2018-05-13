@@ -1,5 +1,6 @@
 // 导入包
 const User = require('./user')
+const winston = require('winston')
 const { createWebAPIRequest } = require('./utils/requests')
 
 class base {
@@ -13,7 +14,7 @@ class base {
 
   /**
    * 从存储当中恢复用户
-   * @param store 用户的信息，用于恢复使用
+   * @param {object} store 用户的信息，用于恢复使用
    */
   load (store) {
     this.user = new User(store)
@@ -28,13 +29,14 @@ class base {
   async request (host, path, method, payload = {
     csrf_token: ''
   }) {
-    return (await createWebAPIRequest(host, path, method, payload, this.cookie)).data
+    return (await createWebAPIRequest(host, path, method, payload, this.user.cookie)).data
   }
 
   async requestWithSetCookie (host, path, method, payload = {
     csrf_token: ''
   }) {
-    const respData = await createWebAPIRequest(host, path, method, payload, this.cookie)
+    const respData = await createWebAPIRequest(host, path, method, payload, this.user.cookie)
+    winston.verbose(respData)
     this.user = new User(respData)
     return respData.data
   }

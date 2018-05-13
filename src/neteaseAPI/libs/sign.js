@@ -8,11 +8,11 @@ class Sign extends Base {
   async sign (type = 0) {
     return this.requestWithSetCookie(
       'music.163.com',
-      '/weapi/login/token/refresh',
+      '/weapi/point/dailyTask',
       'POST',
       {
-        csrf_token: '',
-        type
+        'csrf_token': '',
+        'type': type
       }
     )
   }
