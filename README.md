@@ -4,9 +4,17 @@
 ## 使用
 ```
 # npm i -g pnpm
-pnpm i install
+pnpm i --production
 ```
 然后只需简单得配置一下 `config.json`, 即可正常使用。
+
+> 目前自动创建歌单失败。。。 请手动创建 `./data/playlist.json` 文件
+内容如下: (请修改对应的歌单 Id)
+```
+{
+    "2018.05": "2209235504"
+}
+```
 
 ## To Do List
 * [x] 每日自动签到
