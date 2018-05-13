@@ -1,6 +1,6 @@
 {
-  "name": "netease_daliy",
-  "version": "1.0.0",
+  "name": "netease_helper",
+  "version": "0.0.2",
   "description": "Daily Add & auto play",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "axios": "^0.18.0",
     "big-integer": "^1.6.28",
     "bluebird": "^3.5.1",
-    "cron": "^1.3.0",
+    "cron": "^1.0.0",
     "eslint": "^4.16.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-import": "^2.8.0",
