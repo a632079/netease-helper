@@ -29,14 +29,17 @@ class base {
   async request (host, path, method, payload = {
     csrf_token: ''
   }) {
-    return (await createWebAPIRequest(host, path, method, payload, this.user.cookie)).data
+    return (await createWebAPIRequest(host, path, method, payload, this.cookie)).data
   }
 
   async requestWithSetCookie (host, path, method, payload = {
     csrf_token: ''
   }) {
-    const respData = await createWebAPIRequest(host, path, method, payload, this.user.cookie)
-    winston.verbose(respData)
+    const respData = await createWebAPIRequest(host, path, method, payload, this.cookie)
+    if (respData.data.code === 301) {
+      winston.verbose(this.cookie)
+      winston.verbose(respData)
+    }
     this.user = new User(respData)
     return respData.data
   }

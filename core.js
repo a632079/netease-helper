@@ -58,8 +58,8 @@ async function init () {
   }
   // 调用个需要登录的接口， 测试下信息是否有效
   winston.verbose('测试用户数据是否有效...')
-  const response = await api.sendPlaySongRecord('3852042')
-  if (!response || response.code !== 200) {
+  const response = await api.isLogin
+  if (!response) {
     // 清除用户数据
     fs.unlinkSync(userFile)
     winston.error('登录状态失效， 终结进程进行重新尝试')
@@ -79,7 +79,9 @@ async function autoAddRecommendSongs () {
     winston.verbose('今天已经收藏过日推了， 跳过任务。')
     return
   }
-
+  if (!Status[date]) {
+    Status[date] = {}
+  }
   const now = new Date()
   const year = now.getFullYear().toString()
   const month = (now.getMonth() + 1).toString().length < 2 ? `0${(now.getMonth() + 1).toString()}` : (now.getMonth() + 1).toString()
@@ -144,8 +146,13 @@ async function autoAddRecommendSongs () {
   // 写入歌单
   const response = await api.addSongs(playlistId, songIds)
   if (!response.code || response.code !== 200) {
-    winston.verbose('写入歌单失败')
-    return
+    if (response && response.code === 502) {
+      winston.verbose('歌单部分歌曲重复， 已跳过部分')
+    } else {
+      winston.error('写入歌单失败')
+      winston.verbose(response)
+      return
+    }
   }
 
   // 保存状态
@@ -162,6 +169,9 @@ async function autoSign () {
   if (Status[date] && Status[date].sign) {
     winston.verbose('今天已经签到过了， 跳过任务。')
     return
+  }
+  if (!Status[date]) {
+    Status[date] = {}
   }
   const signResult = await Promise.all([api.sign(0), api.sign(1)])
   if (!(signResult[0] && signResult[1]) || signResult[0].code !== 200 || signResult[1].code !== 200) {
