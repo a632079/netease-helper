@@ -37,6 +37,12 @@ async function createWebAPIRequest (
   data,
   cookie
 ) {
+  // 解决方法参考 https://github.com/Binaryify/NeteaseCloudMusicApi/pull/244/commits/0d2b2fb60336c8f2727a4bee3280a5e8d691837e
+  if (cookie[2] && cookie[2].match(/_csrf=[^(;|$)]+;/g)) { // exist _csrf
+    data['csrf_token'] = cookie[2].match(/_csrf=[^(;|$)]+/g)[0].slice(6)
+  } else {
+    data['csrf_token'] = ''
+  }
   const cryptoreq = Encrypt(data)
   const options = {
     method,
