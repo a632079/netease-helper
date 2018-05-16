@@ -193,22 +193,53 @@ async function autoSign () {
 }
 
 async function startCronJob () {
-  // 启动 CronJob
-  const job = new CronJob({
-    cronTime: '1 */3 * * * *',
+  // 主要任务
+  const mainJob = new CronJob({
+    cronTime: '* 1 * * * *',
     onTick: () => {
       Promise.resolve()
         .then(autoSign)
         .then(autoAddRecommendSongs)
     },
     onComplete: () => {
-      winston.error('CronJob Exit. Process exit')
-      process.exit(1)
+      winston.error('Main Job is stopped. Restart it.')
+      mainJob.start()
     },
     start: false,
     timeZone: 'Asia/Shanghai'
   })
-  job.start()
+
+  // 日推歌曲， 任务。 每天 6 时  1 分清除状态。
+  const recommendSongsJob = new CronJob({
+    cronTime: '* 1 6 * * *', // 秒 分钟 小时 日 月 星期x
+    onTick: () => {
+      // 读取状态文件
+      winston.log(`现在是${new Date().toDateString()}, 开始清除状态以便收藏日推。`)
+      winston.verbose('读取状态文件...')
+      const Status = fs.existsSync(statusFile) ? require(statusFile) : {}
+      const date = new Date().toDateString()
+      if (!Status[date]) {
+        Status[date] = {}
+      }
+
+      winston.verbose('清除状态信息')
+      delete Status[date].Songs
+      delete Status[date].dailyAdd
+
+      winston.verbose('保存状态信息')
+      fs.writeFileSync(statusFile, JSON.stringify(Status))
+    },
+    onComplete: () => {
+      winston.error('Clear Job is stopped. Restart it.')
+      mainJob.start()
+    },
+    start: false,
+    timeZone: 'Asia/Shanghai'
+  })
+
+  // 启动 CronJob
+  recommendSongsJob.start()
+  mainJob.start()
 }
 
 // 启动应用
