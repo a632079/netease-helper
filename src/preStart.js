@@ -35,6 +35,11 @@ function setupWinston (logFile) {
 
 module.exports = {
   preStart: (logFile) => {
+    // 检测 Node.JS 版本
+    if (parseInt(process.version.slice(1, process.version.length)) < 8) {
+      winston.error(`本脚本使用了 ES2017 的 Async Function, 所以要求 Node.js 版本大于 8. 您目前安装的 Node.js 版本为: ${process.version}`)
+      return process.exit(1)
+    }
     registerConfigManager()
     setupWinston(logFile)
     winston.verbose('注册环境完成..')
