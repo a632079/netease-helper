@@ -209,9 +209,9 @@ async function startCronJob () {
     timeZone: 'Asia/Shanghai'
   })
 
-  // 日推歌曲， 任务。 每天 6 时  1 分清除状态。
-  const recommendSongsJob = new CronJob({
-    cronTime: '* 1 6 * * *', // 秒 分钟 小时 日 月 星期x
+  // 日推歌曲， 任务。 每天 6 时  1 分清除状态。 并执行收藏任务。
+  const clearJob = new CronJob({
+    cronTime: '1 1 6 * * *', // 秒 分钟 小时 日 月 星期x
     onTick: () => {
       // 读取状态文件
       winston.log(`现在是${new Date().toDateString()}, 开始清除状态以便收藏日推。`)
@@ -228,18 +228,24 @@ async function startCronJob () {
 
       winston.verbose('保存状态信息')
       fs.writeFileSync(statusFile, JSON.stringify(Status))
+
+      // 执行一波收藏日推
+      autoAddRecommendSongs()
     },
     onComplete: () => {
       winston.error('Clear Job is stopped. Restart it.')
-      mainJob.start()
+      clearJob.start()
     },
     start: false,
     timeZone: 'Asia/Shanghai'
   })
 
   // 启动 CronJob
-  recommendSongsJob.start()
+  clearJob.start()
   mainJob.start()
+  if (!clearJob.running || !mainJob.running) {
+    winston.error('定时任务启动失败， 终结进程。')
+  }
 }
 
 // 启动应用
