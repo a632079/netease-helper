@@ -2,6 +2,7 @@ dependencies:
   axios: 0.18.0
   big-integer: 1.6.28
   bluebird: 3.5.1
+  colors: 1.2.5
   cron: 1.3.0
   eslint: 4.19.1
   eslint-config-standard: 11.0.0
@@ -298,6 +299,13 @@ packages:
     resolution:
       integrity: sha1-BDP0TYCWgP3rYO0mDxsMJi6CpAs=
       tarball: 'http://registry.npm.taobao.org/colors/download/colors-1.0.3.tgz'
+  /colors/1.2.5:
+    dev: false
+    engines:
+      node: '>=0.1.90'
+    resolution:
+      integrity: sha1-icetmjdLwDDfgBMkH2gTbtiDWvw=
+      tarball: 'http://registry.npm.taobao.org/colors/download/colors-1.2.5.tgz'
   /concat-map/0.0.1:
     dev: false
     resolution:
@@ -1704,6 +1712,7 @@ specifiers:
   axios: ^0.18.0
   big-integer: ^1.6.28
   bluebird: ^3.5.1
+  colors: ^1.2.5
   cron: ^1.3.0
   eslint: ^4.16.0
   eslint-config-standard: ^11.0.0-beta.0
