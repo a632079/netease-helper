@@ -195,11 +195,19 @@ async function autoSign () {
 async function startCronJob () {
   // 主要任务
   const mainJob = new CronJob({
-    cronTime: '* 1 * * * *',
+    cronTime: '0 0 */1 * * *',
     onTick: () => {
+      let startTime
       Promise.resolve()
+        .then(() => {
+          winston.info(`当前时间: ${new Date().toLocaleString()}, 开始执行定时任务。`)
+          startTime = Date.now()
+        })
         .then(autoSign)
         .then(autoAddRecommendSongs)
+        .then(() => {
+          winston.info(`本次任务已经全部执行完毕, 耗时: ${Date.now() - startTime}ms.`)
+        })
     },
     onComplete: () => {
       winston.error('Main Job is stopped. Restart it.')
@@ -211,10 +219,10 @@ async function startCronJob () {
 
   // 日推歌曲， 任务。 每天 6 时  1 分清除状态。 并执行收藏任务。
   const clearJob = new CronJob({
-    cronTime: '1 1 6 * * *', // 秒 分钟 小时 日 月 星期x
+    cronTime: '0 1 6 * * *', // 秒 分钟 小时 日 月 星期x
     onTick: () => {
       // 读取状态文件
-      winston.log(`现在是${new Date().toDateString()}, 开始清除状态以便收藏日推。`)
+      winston.verbose(`现在是: ${new Date().toDateString()}, 开始清除状态以便收藏日推。`)
       winston.verbose('读取状态文件...')
       const Status = fs.existsSync(statusFile) ? require(statusFile) : {}
       const date = new Date().toDateString()
@@ -249,6 +257,8 @@ async function startCronJob () {
 }
 
 // 启动应用
+winston.info('开始尝试模块测试...')
+global.startTime = Date.now()
 Promise.resolve()
   .then(init)
   // 出于测试的目的， 所以每次打开会按序执行一遍 CronJob 会执行的任务
@@ -258,6 +268,12 @@ Promise.resolve()
 
   // 启动 CronJob
   .then(startCronJob)
+
+  // 完成
+  .then(() => {
+    winston.info(`耗时: ${Date.now() - global.startTime}ms. 模块测试执行完成， 测试通过。已成功激活定时任务。`)
+    delete global.startTime
+  })
   .catch(err => {
     winston.error(err)
     process.exit(1)
