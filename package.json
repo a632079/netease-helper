@@ -1,0 +1,39 @@
+{
+  "name": "netease_helper",
+  "version": "0.0.4",
+  "description": "Daily Add & auto play",
+  "main": "index.js",
+  "engines": {
+    "node": ">=8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/a632079/netease-daily.git"
+  },
+  "author": "a632079 <a632079@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/a632079/netease-daily/issues"
+  },
+  "homepage": "https://github.com/a632079/netease-daily#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "big-integer": "^1.6.28",
+    "bluebird": "^3.5.1",
+    "colors": "^1.2.5",
+    "cookie": "^0.3.1",
+    "cron": "^1.0.0",
+    "eslint": "^4.16.0",
+    "eslint-config-standard": "^11.0.0-beta.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^6.0.0",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "lodash": "^4.17.10",
+    "nconf": "^0.10.0",
+    "winston": "^2.4.2"
+  }
+}
