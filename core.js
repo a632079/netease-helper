@@ -85,8 +85,11 @@ async function autoAddRecommendSongs () {
   const now = new Date()
   const year = now.getFullYear().toString()
   const month = (now.getMonth() + 1).toString().length < 2 ? `0${(now.getMonth() + 1).toString()}` : (now.getMonth() + 1).toString()
-  const playlistName = `${year}.${month}` // 类似 2018.05
-
+  let playlistName = `${year}.${month}` // 类似 2018.05
+  // 增加个性化设置
+  if (nconf.get('playlistName')) {
+    playlistName = nconf.get('playlistName').replace('%Y', year).replace('%M', month)
+  }
   // 解析 playlistFile
   winston.verbose('开始解析歌单文件...')
   const playlists = fs.existsSync(playlistFile) ? require(playlistFile) : {}
@@ -194,8 +197,13 @@ async function autoSign () {
 
 async function startCronJob () {
   // 主要任务
+  let mainJobCronTime = '0 0 */1 * * *'
+  if (nconf.get('loopHour')) {
+    const Hour = nconf.get('loopHour')
+    mainJobCronTime = `0 0 0/${Hour} * * *`
+  }
   const mainJob = new CronJob({
-    cronTime: '0 0 */1 * * *',
+    cronTime: mainJobCronTime,
     onTick: () => {
       let startTime
       Promise.resolve()
@@ -218,8 +226,13 @@ async function startCronJob () {
   })
 
   // 日推歌曲， 任务。 每天 6 时  1 分清除状态。 并执行收藏任务。
+  let clearJobCronTime = '0 1 6 * * *'
+  if (nconf.get('dailyRestTime')) {
+    const HourAndMinute = nconf.get('dailyRestTime').spilt(':')
+    clearJobCronTime = `0 ${HourAndMinute[0]} ${HourAndMinute[1]} * * *`
+  }
   const clearJob = new CronJob({
-    cronTime: '0 1 6 * * *', // 秒 分钟 小时 日 月 星期x
+    cronTime: clearJobCronTime, // 秒 分钟 小时 日 月 星期x
     onTick: () => {
       // 读取状态文件
       winston.verbose(`现在是: ${new Date().toDateString()}, 开始清除状态以便收藏日推。`)

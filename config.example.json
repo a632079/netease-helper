@@ -3,6 +3,9 @@
         "cellphone": "",
         "password": ""
     },
+    "playlistName": "%Y.%M日推",
+    "dailyResetTime": "6:01",
+    "loopHour": "3",
     "url": "",
     "port": "7890"
 }

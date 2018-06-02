@@ -1,6 +1,8 @@
 const axios = require('axios')
 const qs = require('querystring')
 const querystring = qs
+const _ = require('lodash')
+const Cookie = require('cookie')
 const Encrypt = require('./crypto')
 
 function randomUserAgent () {
@@ -38,11 +40,15 @@ async function createWebAPIRequest (
   cookie
 ) {
   // 解决方法参考 https://github.com/Binaryify/NeteaseCloudMusicApi/pull/244/commits/0d2b2fb60336c8f2727a4bee3280a5e8d691837e
-  if (cookie[2] && cookie[2].match(/_csrf=[^(;|$)]+;/g)) { // exist _csrf
-    data['csrf_token'] = cookie[2].match(/_csrf=[^(;|$)]+/g)[0].slice(6)
-  } else {
-    data['csrf_token'] = ''
+  let csrfToken = ''
+  for (let single of cookie) {
+    if (single.match(/_csrf=[^(;|$)]+;/g)) {
+      // 存在 csrf_token 的值
+      csrfToken = single.match(/_csrf=[^(;|$)]+/g)[0].slice(6)
+    }
   }
+  // console.log(csrfToken)
+  data.csrf_token = csrfToken
   const cryptoreq = Encrypt(data)
   const options = {
     method,
@@ -75,6 +81,27 @@ async function createWebAPIRequest (
     cookie = cookie
       .map(x => x.replace(/.music.163.com/g, ''))
       .sort((a, b) => a.length - b.length)
+    // 去除空值
+    const cookieToRemove = []
+    for (let i = 0; i < cookie.length; i++) {
+      const current = cookie[i]
+      // 首先， 解析数组并且抹除 Cookie 附加的内容
+      const cookieObj = Cookie.parse(current)
+      delete cookieObj.Expires
+      delete cookieObj.Path
+      delete cookieObj.Domain
+
+      // 抹除完之后应该就一个参数了， 迭代只执行一次
+      // console.log(cookieObj)
+      await _.map(cookieObj, value => {
+        if (!value) {
+          // 为空， 加入删除数组
+          cookieToRemove.push(current)
+        }
+      })
+    }
+    // 移除参数
+    _.pull(cookie, cookieToRemove)
   }
   return {
     cookie: cookies,
